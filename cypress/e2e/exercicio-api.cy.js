@@ -5,9 +5,6 @@ import { faker } from "@faker-js/faker"
 
 describe('Testes da Funcionalidade Usuários', () => {
 
-  const nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
-  const email = nome.replace(/ /g, '').toLowerCase()
-
   beforeEach(() => {
 
   });
@@ -46,6 +43,9 @@ describe('Testes da Funcionalidade Usuários', () => {
   });
 
   it('Deve cadastrar um usuário com sucesso usando Math', () => {
+    const nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    const email = nome.replace(/ /g, '').toLowerCase()
+
     cy.request({
       method: 'POST',
       url: 'usuarios',
@@ -81,6 +81,9 @@ describe('Testes da Funcionalidade Usuários', () => {
   });
 
   it.only('Deve validar cadastro de um usuário com email já cadastrado', () => {
+    const nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    const email = nome.replace(/ /g, '').toLowerCase()
+
     cy.cadastrarUsuario(nome, `${email}@qa.com`, 'teste', 'true')
       .then((response)=>{
         expect(response.body.message).to.equal('Cadastro realizado com sucesso')
