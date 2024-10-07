@@ -9,13 +9,13 @@ describe('Testes da Funcionalidade Usuários', () => {
 
   });
 
-  it('Deve validar contrato de usuários', () => {
+  it('Deve validar contrato de usuários - GET', () => {
     cy.request('usuarios').then(response => {
       return contrato.validateAsync(response.body)
     })
   })
 
-  it('Deve listar usuários cadastrados com sucesso', () => {
+  it('Deve listar usuários cadastrados com sucesso - GET', () => {
     cy.request({
       method: 'GET',
       url: 'usuarios'
@@ -26,7 +26,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
 
-  it('Deve cadastrar um usuário com sucesso usando faker', () => {
+  it('Deve cadastrar um usuário com sucesso usando faker - POST', () => {
     cy.request({
       method: 'POST',
       url: 'usuarios',
@@ -42,7 +42,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
 
-  it('Deve cadastrar um usuário com sucesso usando Math', () => {
+  it('Deve cadastrar um usuário com sucesso usando Math - POST', () => {
     let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
     let email = nome.replace(/ /g, '').toLowerCase()
 
@@ -61,7 +61,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
 
-  it('Deve validar busca de um usuário com sucesso', () => {
+  it('Deve validar busca de um usuário com sucesso - GET', () => {
     let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
     let email = nome.replace(/ /g, '').toLowerCase()
 
@@ -78,7 +78,7 @@ describe('Testes da Funcionalidade Usuários', () => {
       })
   });
 
-  it('Deve validar cadastro de um usuário com email inválido', () => {
+  it('Deve validar cadastro de um usuário com email inválido - POST', () => {
     cy.request({
       method: 'POST',
       url: 'usuarios',
@@ -95,7 +95,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
   
-  it('Deve validar cadastro de um usuário com email já cadastrado', () => {
+  it('Deve validar cadastro de um usuário com email já cadastrado - POST', () => {
     let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
     let email = nome.replace(/ /g, '').toLowerCase()
 
@@ -107,7 +107,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   })
 
-  it('Deve editar um usuário previamente cadastrado', () => {
+  it('Deve editar um usuário previamente cadastrado - PUT', () => {
     let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
     let email = nome.replace(/ /g, '').toLowerCase()
 
@@ -130,7 +130,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
   
-  it('Deve deletar um usuário previamente cadastrado', () => {
+  it('Deve deletar um usuário previamente cadastrado - DELETE', () => {
     let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
     let email = nome.replace(/ /g, '').toLowerCase()
 
