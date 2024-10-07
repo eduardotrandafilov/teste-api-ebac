@@ -43,8 +43,8 @@ describe('Testes da Funcionalidade Usuários', () => {
   });
 
   it('Deve cadastrar um usuário com sucesso usando Math', () => {
-    const nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
-    const email = nome.replace(/ /g, '').toLowerCase()
+    let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    let email = nome.replace(/ /g, '').toLowerCase()
 
     cy.request({
       method: 'POST',
@@ -61,9 +61,23 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
 
-  /*identificado necessidade de melhoria na documentação da api 
-    para inclusão de mensagem caso cadastro de usuario tenha email inválido
-  */
+  it('Deve validar busca de um usuário com sucesso', () => {
+    let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    let email = nome.replace(/ /g, '').toLowerCase()
+
+    cy.cadastrarUsuario(nome,`${email}@qa.com`, 'teste', 'true')
+      .then((response)=>{
+        let id = response.body._id
+        cy.request({
+          method:'GET',
+          url: `usuarios/${id}`
+        }).then((response)=>{
+          expect(response.body).to.have.property('nome')
+          expect(response.status).to.equal(200)
+        })
+      })
+  });
+
   it('Deve validar cadastro de um usuário com email inválido', () => {
     cy.request({
       method: 'POST',
@@ -76,32 +90,60 @@ describe('Testes da Funcionalidade Usuários', () => {
       },
       failOnStatusCode: false
     }).should((response) => {
-      expect(response.body.email).equal('email deve ser um email válido')
+      expect(response.body.email).to.equal('email deve ser um email válido')
+      expect(response.status).to.equal(400)
     })
   });
+  
+  it('Deve validar cadastro de um usuário com email já cadastrado', () => {
+    let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    let email = nome.replace(/ /g, '').toLowerCase()
 
-  it.only('Deve validar cadastro de um usuário com email já cadastrado', () => {
-    const nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
-    const email = nome.replace(/ /g, '').toLowerCase()
+    cy.cadastrarUsuario(nome,`${email}@qa.com`,'teste', 'true')
+    cy.cadastrarUsuario('Novo Usuario',`${email}@qa.com`,'teste', 'true')
+     .then((response)=>{
+      expect(response.body.message).to.equal('Este email já está sendo usado')
+      expect(response.status).to.equal(400)
+    })
+  })
 
-    cy.cadastrarUsuario(nome, `${email}@qa.com`, 'teste', 'true')
-      .then((response)=>{
-        expect(response.body.message).to.equal('Cadastro realizado com sucesso')
-        expect(response.status).to.equal(201)
+  it('Deve editar um usuário previamente cadastrado', () => {
+    let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    let email = nome.replace(/ /g, '').toLowerCase()
+
+    cy.cadastrarUsuario(nome,`${email}@qa.com`, 'teste', 'true')
+    .then((response)=>{
+      let id = response.body._id
+      cy.request({
+        method:'PUT',
+        url: `usuarios/${id}`,
+        body:{
+          "nome": "Usuario EBAC Editado",
+          "email": `${email}@qa.com`,
+          "password": "teste",
+          "administrador": "true"
+        }
+      }).then((response)=>{
+        expect(response.body.message).to.equal('Registro alterado com sucesso')
+        expect(response.status).to.equal(200)
       })
-    cy.cadastrarUsuario(nome, `${email}@qa.com`, 'teste', 'true')
-      .then((response)=>{
-        expect(response.body.message).to.equal('Este email já está sendo usado')
-        expect(response.status).to.equal(400)
-      })
+    })
   });
+  
+  it('Deve deletar um usuário previamente cadastrado', () => {
+    let nome = 'Usuario EBAC ' + Math.floor(Math.random() * 100000000000000)
+    let email = nome.replace(/ /g, '').toLowerCase()
 
-it('Deve editar um usuário previamente cadastrado', () => {
-
-});
-
-it('Deve deletar um usuário previamente cadastrado', () => {
-  //TODO: 
-});
-
+    cy.cadastrarUsuario(nome,`${email}@qa.com`, 'teste', 'true')
+    .then((response)=>{
+      let id = response.body._id
+      cy.request({
+        method:'DELETE',
+        url: `usuarios/${id}`,
+      }).then((response)=>{
+        expect(response.body.message).to.equal('Registro excluído com sucesso')
+        expect(response.status).to.equal(200)
+      })
+    })
+  });
 });
